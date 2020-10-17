@@ -9,6 +9,7 @@ def get_odd_elements(checked_list):
             result.append(checker)
     return result
 
+
 def get_even_elements(checked_list):
     result = []
     for checker in checked_list:
