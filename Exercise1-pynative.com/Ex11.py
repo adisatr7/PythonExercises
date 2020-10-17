@@ -1,3 +1,6 @@
+# Question 11: Write a code to extract each digit
+# from an integer, in the reverse order
+
 def reverse_string(string):
     new_string = ""
     for i in range(len(string)-1, -1, -1):

@@ -1,4 +1,5 @@
-# Sorta given up lol
+# Question 12: Calculate income tax for the given income by adhering to the below rules
+# --Sorta given up, lol--
 
 income = int(input("Taxable income: "))
 

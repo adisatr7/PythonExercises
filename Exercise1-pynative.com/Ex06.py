@@ -1,3 +1,6 @@
+# Question 6: Given a list of numbers, Iterate it and
+# print only those numbers which are divisible of 5
+
 def find_divisible_5(checked_list):
     for checker in checked_list:
         if checker % 5 == 0:
