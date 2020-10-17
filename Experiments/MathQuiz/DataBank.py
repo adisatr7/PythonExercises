@@ -1,5 +1,6 @@
 import random
 
+
 class Questions:
 
     def __init__(self, rounds, chance):
@@ -18,7 +19,8 @@ class Questions:
         elif seed == 4:
             return "/"
 
-    def get_answer(self, num1, op, num2):
+    @staticmethod
+    def get_answer(num1, op, num2):
         if op == "+":
             return num1 + num2
         elif op == "-":
