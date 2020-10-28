@@ -18,7 +18,7 @@ my_label = Label(image=img_list[0])
 my_label.grid(row=0, column=0, columnspan=3)
 
 
-def forward(image_number):
+def navigate(image_number):
     global my_label
     global bt_forward
     global bt_back
@@ -26,32 +26,15 @@ def forward(image_number):
     my_label.grid_forget()
     my_label = Label(image=img_list[image_number-1])
 
-    bt_forward = Button(root, text=">>", command=lambda: forward(image_number+1))
-    bt_back = Button(root, text="<<", command=lambda: back(image_number-1))
+    bt_forward = Button(root, text=">>", command=lambda: navigate(image_number + 1))
+    bt_back = Button(root, text="<<", command=lambda: navigate(image_number-1))
 
     my_label.grid(row=0, column=0, columnspan=3)
 
     if image_number == len(img_list):
         bt_forward = Button(root, text=">>", state=DISABLED)
-
-    update_buttons()
-
-
-def back(image_number):
-    global my_label
-    global bt_forward
-    global bt_back
-
-    my_label.grid_forget()
-    my_label = Label(image=img_list[image_number - 1])
-
-    bt_forward = Button(root, text=">>", command=lambda: forward(image_number + 1))
-    bt_back = Button(root, text="<<", command=lambda: back(image_number - 1))
-
-    my_label.grid(row=0, column=0, columnspan=3)
-
     if image_number == 1:
-        bt_back = Button(root, text=">>", state=DISABLED)
+        bt_back = Button(root, text="<<", state=DISABLED)
 
     update_buttons()
 
@@ -64,7 +47,7 @@ def update_buttons():
 
 bt_back = Button(root, text="<<", state=DISABLED)
 bt_quit = Button(root, text="Close", command=root.quit)
-bt_forward = Button(root, text=">>", command=lambda: forward(2))
+bt_forward = Button(root, text=">>", command=lambda: navigate(2))
 
 update_buttons()
 
