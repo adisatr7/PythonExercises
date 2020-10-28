@@ -6,11 +6,11 @@ root = Tk()
 root.title("Basic Image Viewer")
 root.iconbitmap("app_edit.ico")
 
-img1 = ImageTk.PhotoImage(Image.open("Gallery/01.jpg"))
-img2 = ImageTk.PhotoImage(Image.open("Gallery/02.jpg"))
-img3 = ImageTk.PhotoImage(Image.open("Gallery/03.jpg"))
-img4 = ImageTk.PhotoImage(Image.open("Gallery/04.jpg"))
-img5 = ImageTk.PhotoImage(Image.open("Gallery/05.jpg"))
+img1 = ImageTk.PhotoImage(Image.open("Gallery/01.png"))
+img2 = ImageTk.PhotoImage(Image.open("Gallery/02.png"))
+img3 = ImageTk.PhotoImage(Image.open("Gallery/03.png"))
+img4 = ImageTk.PhotoImage(Image.open("Gallery/04.png"))
+img5 = ImageTk.PhotoImage(Image.open("Gallery/05.png"))
 
 img_list = [img1, img2, img3, img4, img5]
 
