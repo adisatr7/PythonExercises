@@ -14,22 +14,26 @@ img5 = ImageTk.PhotoImage(Image.open("Gallery/05.jpg"))
 
 img_list = [img1, img2, img3, img4, img5]
 
-my_label = Label(image=img_list[0])
-my_label.grid(row=0, column=0, columnspan=3)
+img_holder = Label(image=img_list[0])
+img_holder.grid(row=0, column=0, columnspan=3)
+
+img_num = Label(root, text=f"Image 1 of {len(img_list)}", bd=1, relief=SUNKEN, anchor=E)
 
 
 def navigate(image_number):
-    global my_label
+    global img_holder
     global bt_forward
     global bt_back
+    global img_num
 
-    my_label.grid_forget()
-    my_label = Label(image=img_list[image_number-1])
+    img_holder.grid_forget()
+    img_holder = Label(image=img_list[image_number - 1])
 
     bt_forward = Button(root, text=">>", command=lambda: navigate(image_number + 1))
     bt_back = Button(root, text="<<", command=lambda: navigate(image_number-1))
+    img_num = Label(root, text=f"Image {image_number} of {len(img_list)}", bd=1, relief=SUNKEN, anchor=E)
 
-    my_label.grid(row=0, column=0, columnspan=3)
+    img_holder.grid(row=0, column=0, columnspan=3)
 
     if image_number == len(img_list):
         bt_forward = Button(root, text=">>", state=DISABLED)
@@ -40,9 +44,10 @@ def navigate(image_number):
 
 
 def update_buttons():
-    bt_back.grid(row=1, column=0)
-    bt_quit.grid(row=1, column=1)
-    bt_forward.grid(row=1, column=2)
+    bt_back.grid(row=1, column=0, pady=7)
+    bt_quit.grid(row=1, column=1, pady=7)
+    bt_forward.grid(row=1, column=2, pady=7)
+    img_num.grid(row=2, column=0, columnspan=3, sticky=W+E)
 
 
 bt_back = Button(root, text="<<", state=DISABLED)
