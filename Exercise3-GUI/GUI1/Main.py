@@ -6,7 +6,7 @@ root = tk.Tk()
 loaded_apps = []
 
 # To load a previously loaded apps from another session
-if os.path.isfile("GUI_Training1_save.txt"):
+if os.path.isfile("save.txt"):
     with open("save.txt", "r") as f:
         temp_apps = f.read()
         temp_apps = temp_apps.split(',')
