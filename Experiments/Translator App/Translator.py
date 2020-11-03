@@ -44,14 +44,14 @@ LANG_DICT = {'af': 'afrikaans', 'sq': 'albanian', 'am': 'amharic', 'ar': 'arabic
 # -- Functions ---
 
 # Function: Starts benchmarking timer
-def start_timer(prompt):
+def timer_start(prompt):
     global start
     start = timeit()
     print(prompt)
 
 
 # Function: Stops and calculates timer
-def stop_timer(prompt):
+def timer_stop(prompt):
     if prompt is not None:
         print(prompt)
     global start, stop
@@ -64,8 +64,8 @@ def is_auto():
     return True if auto_detect.get() else False
 
 
-# Function: Returns True if an [Enter] glitch occurs
-def is_enter_glitch(text):
+# Function: Returns True if a glitch occurs
+def is_glitching(text):
     return True if str(text.pronunciation)[-1] == "\n" else False
 
 
@@ -81,31 +81,56 @@ def get_pronunciation(text):
 
 # Returns a list of all languages in proper capitalization
 def get_language_list():
-    start_timer("Generating language list...")
+    timer_start("Generating language list...")
     language_list = []
     for ID in LANG_KEYS:
         new_language = LANG_DICT.get(ID).title()
         language_list.append(new_language)
-    stop_timer("Language generation process completed!")
+    timer_stop("Language generation process completed!")
     return language_list
 
 
 # Function: Returns translated text
-def get_translated_text(source_text, lang_input, lang_output):
-    start_timer("Translating...")
+def get_translated_text(untranslated_text):
+    timer_start("Translating...")
+    global lg_output, lg_input
 
+    # Check if auto_detect language checkbox is checked
     if is_auto():
-        translated = tr.translate(source_text, lang_output, 'auto')
-        auto_update_language(source_text)
+        translated = tr.translate(untranslated_text, lg_output.get(), 'auto')
+        auto_update_language(untranslated_text)
     else:
-        translated = tr.translate(source_text, lang_output, lang_input)
+        translated = tr.translate(untranslated_text, lg_output.get(), lg_input.get())
 
-    if translated.pronunciation is None or is_enter_glitch(translated):
-        stop_timer(f"Translation completed!\n{translated}")
+    # Decide whether to write the pronunciation or not
+    if translated.pronunciation is None or is_glitching(translated):
+        timer_stop(f"Translation completed!\n{translated}")
         return translated.text
     else:
-        stop_timer(f"Translation completed!\n{translated}")
+        timer_stop(f"Translation completed!\n{translated}")
         return translated.text + get_pronunciation(translated)
+
+
+# Function: Updates a textbox with a new value
+def set_box(box, new_value):
+    box.delete(0.0, END)
+    box.insert(0.0, new_value)
+
+
+# Function: Swaps input box and output box
+def swap_boxes():
+    global bx_input, bx_output
+    temp = bx_output.get(0.0, "end-1c")
+    set_box(bx_output, bx_input.get(0.0, "end-1c"))
+    set_box(bx_input, temp)
+
+
+# Function: Swaps input language and output language
+def swap_languages():
+    global lg_input, lg_output
+    temp = lg_output.get()
+    lg_output.set(lg_input.get())
+    lg_input.set(temp)
 
 
 # -- Buttons ---
@@ -113,8 +138,14 @@ def get_translated_text(source_text, lang_input, lang_output):
 # Button: bt_translate
 def button_translate():
     global bx_output
-    bx_output.delete(0.0, END)
-    bx_output.insert(0.0, get_translated_text(bx_input.get(0.0, END), lg_input.get(), lg_output.get()))
+    set_box(bx_output, get_translated_text(bx_input.get(0.0, END)))
+
+
+def button_swap():
+    timer_start("Swapping input and output language...")
+    swap_boxes()
+    swap_languages()
+    timer_stop(None)
 
 
 # -- Main ---
@@ -122,6 +153,7 @@ def button_translate():
 if __name__ == "__main__":
 
     # GUI Initialization
+    print("Initializing GUI...")
     gui = Tk()
     gui.title(app_name)
     # gui.iconbitmap(app_icon)
@@ -130,40 +162,45 @@ if __name__ == "__main__":
     tr = Translator(service_urls=["translate.google.com"])
 
     # Text: Powered by GoogleTranslate
-    tx_powered = Label(text="Powered by Google Translate", bg="#4885ed", fg="white")
-    tx_powered.grid(row=0, column=0, columnspan=4, sticky=W + E)
+    tx_powered_by = Label(text="Powered by Google Translate", bg="#4885ed", fg="white")
+    tx_powered_by.grid(row=0, column=0, columnspan=10, sticky=W + E)
 
     # Input section
-    tx_input = Label(text="From ")                                      # Text: "From"
+    tx_input = Label(text="From")                                      # Text: "From"
     lg_input = StringVar()                                              # Input language variable
     dr_input = ttk.OptionMenu(gui, lg_input, *get_language_list())      # Input language dropdown menu
-    lg_input.set(value='English')  # Input language default value
+    lg_input.set(value='English')                                       # Input language default value
     bx_input = Text(gui, height=12, width=45)                           # Textbox: Input
 
-    tx_input.grid(row=1, column=0, sticky=E)
-    dr_input.grid(row=1, column=1, sticky=W)
-    bx_input.grid(row=2, column=0, columnspan=2)
+    tx_input.grid(row=1, column=0, columnspan=2, sticky=E)
+    dr_input.grid(row=1, column=2, columnspan=2, sticky=W)
+    bx_input.grid(row=2, column=0, columnspan=5)
 
     # Output section
-    tx_output = Label(text="To ")                                       # Text: "To"
+    tx_output = Label(text="To")                                       # Text: "To"
     lg_output = StringVar()                                             # Output language variable
     dr_output = ttk.OptionMenu(gui, lg_output, *get_language_list())    # Output language dropdown menu
     lg_output.set(value='English')                                      # Output language default value
     bx_output = Text(gui, height=12, width=45)                          # Textbox: Output
 
-    tx_output.grid(row=1, column=2, sticky=E)
-    dr_output.grid(row=1, column=3, sticky=W)
-    bx_output.grid(row=2, column=2, columnspan=2)
+    tx_output.grid(row=1, column=6, columnspan=1, sticky=E)
+    dr_output.grid(row=1, column=7, columnspan=3, sticky=W)
+    bx_output.grid(row=2, column=5, columnspan=5)
 
     # Checkbox: Automatically detect language?
     auto_detect = IntVar()
     auto_detect.set(value=1)
     ck_auto = ttk.Checkbutton(gui, text="Automatically detect source language", variable=auto_detect)
-    ck_auto.grid(row=3, column=0, columnspan=2)
+    ck_auto.grid(row=3, column=0, columnspan=5)
+
+    # Button: Swap languages <->
+    bt_swap = ttk.Button(gui, text="<Swap>", command=button_swap)
+    bt_swap.grid(row=1, column=4, columnspan=2)
 
     # Button: Get translation
     bt_translate = ttk.Button(gui, text="Translate", command=button_translate)
-    bt_translate.grid(row=3, column=2, columnspan=2)
+    bt_translate.grid(row=3, column=5, columnspan=5, pady=5)
 
     # End of the line
+    print("Good to go!")
     gui.mainloop()
