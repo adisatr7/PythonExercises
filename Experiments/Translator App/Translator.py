@@ -166,7 +166,7 @@ if __name__ == "__main__":
     tx_powered_by.grid(row=0, column=0, columnspan=10, sticky=W + E)
 
     # Input section
-    tx_input = Label(text="From")                                      # Text: "From"
+    tx_input = Label(text="From")                                       # Text: "From"
     lg_input = StringVar()                                              # Input language variable
     dr_input = ttk.OptionMenu(gui, lg_input, *get_language_list())      # Input language dropdown menu
     lg_input.set(value='English')                                       # Input language default value
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     bx_input.grid(row=2, column=0, columnspan=5)
 
     # Output section
-    tx_output = Label(text="To")                                       # Text: "To"
+    tx_output = Label(text="To")                                        # Text: "To"
     lg_output = StringVar()                                             # Output language variable
     dr_output = ttk.OptionMenu(gui, lg_output, *get_language_list())    # Output language dropdown menu
     lg_output.set(value='English')                                      # Output language default value
