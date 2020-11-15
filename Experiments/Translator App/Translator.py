@@ -1,12 +1,12 @@
-from timeit import timeit
+from time import perf_counter
 from googletrans import Translator
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 # -- Configs ---
 
-app_name = "@raddox7's First Translator App"
-app_icon = "app_icon.ico"
+APP_NAME = "@raddox7's First Translator App"
+APP_ICON = "app_icon.ico"
 
 # -- Supported Languages ---
 LANG_KEYS = ['af', 'sq', 'am', 'ar', 'hy', 'az', 'eu', 'be', 'bn', 'bs', 'bg', 'ca', 'ceb', 'ny', 'zh-cn',
@@ -40,13 +40,15 @@ LANG_DICT = {'af': 'afrikaans', 'sq': 'albanian', 'am': 'amharic', 'ar': 'arabic
              'th': 'thai', 'tr': 'turkish', 'uk': 'ukrainian', 'ur': 'urdu', 'ug': 'uyghur', 'uz': 'uzbek',
              'vi': 'vietnamese', 'cy': 'welsh', 'xh': 'xhosa', 'yi': 'yiddish', 'yo': 'yoruba', 'zu': 'zulu'}
 
+timer = float()
+
 
 # -- Functions ---
 
 # Function: Starts benchmarking timer
 def timer_start(prompt):
-    global start
-    start = timeit()
+    global timer
+    timer = perf_counter()
     print(prompt)
 
 
@@ -54,9 +56,8 @@ def timer_start(prompt):
 def timer_stop(prompt):
     if prompt is not None:
         print(prompt)
-    global start, stop
-    stop = timeit()
-    print(f"Process finished in {stop - start}")
+    global timer
+    print(f"Process finished in {perf_counter() - timer:.4} second(s)!")
 
 
 # Function: Returns True if auto_detect is On
@@ -92,13 +93,19 @@ def get_language_list():
 
 # Function: Returns translated text
 def get_translated_text(untranslated_text):
+    
     timer_start("Translating...")
     global lg_output, lg_input
 
     # Check if auto_detect language checkbox is checked
     if is_auto():
-        translated = tr.translate(untranslated_text, lg_output.get(), 'auto')
-        auto_update_language(untranslated_text)
+        try:
+            translated = tr.translate(untranslated_text, lg_output.get(), 'auto')
+            auto_update_language(untranslated_text)
+        except (AttributeError, KeyError):
+            timer_stop("Error: Input language unknown!")
+            messagebox.showerror("Input language unknown", "Try unchecking automatic language detection!")
+            return " "
     else:
         translated = tr.translate(untranslated_text, lg_output.get(), lg_input.get())
 
@@ -138,7 +145,10 @@ def swap_languages():
 # Button: bt_translate
 def button_translate():
     global bx_output
-    set_box(bx_output, get_translated_text(bx_input.get(0.0, END)))
+    try:
+        set_box(bx_output, get_translated_text(bx_input.get(0.0, END)))
+    except IndexError:
+        print("Input box is empty!")
 
 
 def button_swap():
@@ -155,7 +165,7 @@ if __name__ == "__main__":
     # GUI Initialization
     print("Initializing GUI...")
     gui = Tk()
-    gui.title(app_name)
+    gui.title(APP_NAME)
     # gui.iconbitmap(app_icon)
 
     # Translator Initialization
